@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {v4 as uuidv4} from 'uuid';
 
 import FoodList from './components/FoodList';
-import './App.css';
+// import './App.css';
 import classes from './App.module.css';
-import {v4 as uuidv4} from 'uuid';
+
 
 function App() {
   const [foodLists, setFoodLists] = useState([]);
@@ -14,26 +15,37 @@ function App() {
     origin:'',
   });
   const [isEdit, setIsEdit] = useState(false);
+  const [isInputValid, setIsInputValid] = useState(true);
+ 
+ 
+
 
   const inputHandler = (e) => {
+    if(e.target.value !==''){
+      setIsInputValid(true);
+    }
+
     
-    setFood({...food, [e.target.name]:e.target.value});
+      setFood({...food, [e.target.name]:e.target.value}); 
   };
 
   const submitHandler = (e) => {
     
     e.preventDefault();
+    if(food.name === '' || food.origin === '' || food.price === '') {
+      setIsInputValid(false);
+      return
+    }
     
-    if(!isEdit) {
+    if(!isEdit && isInputValid) {
       let newId = uuidv4();
       let newFood = {...food, id: newId};
       setFood(newFood);
       let newFoodLists = [ ...foodLists, newFood];
    
       setFoodLists(newFoodLists);
-    } else {
-      // let filteredFoodLists = foodLists.filter(item=>item.id !== food.id);
-      // let newFoodLists = [food, ...filteredFoodLists];
+    } else if(isEdit && isInputValid) {
+    
       const currentIndex = foodLists.findIndex(item => item.id === food.id);
       const frontArray = foodLists.slice(0,currentIndex);
       const endArray = foodLists.slice(currentIndex+1);
@@ -42,7 +54,7 @@ function App() {
 
       setFoodLists(newFoodLists);
       setIsEdit(false);
-    }
+    } 
     
     setFood({
       id: '',
@@ -50,9 +62,11 @@ function App() {
       price:'',
       origin:'',
     });  
+     
   };
 
   const editFoodHandler = (editId) => {
+    setIsInputValid(true);
     
       setIsEdit(true);
       const findEditItem = (foodLists.filter(item => item.id === editId))[0];
@@ -61,7 +75,7 @@ function App() {
   };
 
   const deleteFoodHandler = (deleteId) => {
-    
+    setIsInputValid(true);
     const filteredLists = foodLists.filter(item=>item.id !== deleteId);
     setFoodLists(filteredLists);
 
@@ -70,8 +84,7 @@ function App() {
       name:'',
       price:'',
       origin:'',
-    }); 
-    
+    });  
   }
 
   return (
@@ -95,12 +108,13 @@ function App() {
           </div>
           <div className={classes.inputStyle}>
             <label>Price:</label>
-            <input type='text' value={food.price} name='price' onChange={inputHandler}/>
+            <input type='number' value={food.price} name='price' onChange={inputHandler}/>
           </div>
           <div className={classes.inputStyle}>
             <label>Origin:</label>
             <input type='text' value={food.origin} name='origin' onChange={inputHandler}/>
           </div>
+          {isInputValid?'':<p style={{textAlign:'center',fontSize:'15px'}}>please input valid value!</p>}
           <button type='submit'>{!isEdit? 'ADD':'Update'}</button>
         </form>
       </div>  

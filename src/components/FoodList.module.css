@@ -8,6 +8,7 @@
 
 }
 .listCon button{
+    width: 50px;
     position: absolute;
     right: 5px;
     top:5px;

@@ -9,8 +9,7 @@ const FoodList = ({foodItem, editFoodHandler,  deleteFoodHandler}) => {
     const onDeleteHandler = (event,foodDeleteId)=>{
         event.stopPropagation();
 
-        deleteFoodHandler(foodDeleteId);
-        
+        deleteFoodHandler(foodDeleteId);    
     }
 
     return (
